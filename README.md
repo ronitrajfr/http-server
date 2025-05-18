@@ -1,6 +1,6 @@
 # Simple HTTP Server
 
-A lightweight HTTP server implementation built with Node.js and TypeScript that handles basic HTTP requests without relying on frameworks like Express.
+A lightweight HTTP server implementation built with Node.js and TypeScript that handles basic HTTP requests.
 
 ## Overview
 
@@ -28,20 +28,25 @@ This server is a minimalistic implementation of HTTP protocol handling, capable 
 ## Installation
 
 1. Clone the repository:
-   git clone <repository-url>
-   cd <repository-folder>
+
+   ```bash
+   git clone https://github.com/ronitrajfr/http-server.git
+   cd http-server
+   ```
 
 2. Install dependencies:
-   npm install
 
-3. Compile TypeScript:
-   npx tsc
+   ```bash
+   bun install
+   ```
 
 ## Usage
 
 Start the server with an optional directory for file operations:
 
-node dist/server.js --directory <path-to-directory>
+```bash
+bun run dev --directory <path-to-directory>
+```
 
 The server will listen on localhost port 4221.
 
@@ -99,32 +104,47 @@ The server implements HTTP request parsing from scratch:
 
 ### Echo Example
 
+```bash
 curl -v http://localhost:4221/echo/hello
+```
 
 Response:
+
+```http
 HTTP/1.1 200 OK
 Content-Type: text/plain
 Content-Length: 5
 
 hello
+```
 
 ### File Upload Example
 
+```bash
 curl -v -X POST -d 'Hello, File!' http://localhost:4221/files/test.txt
+```
 
 Response:
+
+```http
 HTTP/1.1 201 Created
+```
 
 ### File Retrieval Example
 
+```bash
 curl -v http://localhost:4221/files/test.txt
+```
 
 Response:
+
+```http
 HTTP/1.1 200 OK
 Content-Type: application/octet-stream
 Content-Length: 12
 
 Hello, File!
+```
 
 ## License
 
