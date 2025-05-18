@@ -61,10 +61,9 @@ const server = net.createServer((socket) => {
         directoryIndex !== -1 ? process.argv[directoryIndex + 1] : "";
       const filename = path.replace("/files/", "");
       const filePath = pathModule.join(baseDir, filename);
-      if (method == "POST") {
-        const body = requestData.split("\r\n\r\n")[1];
-        console.log(requestData);
-        console.log(body);
+
+      if (method === "POST") {
+        const body = requestData.split("\r\n\r\n")[1] || "";
         fs.writeFile(filePath, body, (err) => {
           if (err) {
             socket.write("HTTP/1.1 500 Internal Server Error\r\n\r\n");
@@ -72,20 +71,22 @@ const server = net.createServer((socket) => {
             socket.write("HTTP/1.1 201 Created\r\n\r\n");
           }
         });
+      } else if (method === "GET") {
+        fs.readFile(filePath, (err, fileData) => {
+          if (err) {
+            console.log(err);
+            socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
+          } else {
+            const length = fileData.length;
+            socket.write(
+              `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${length}\r\n\r\n`
+            );
+            socket.write(fileData as Uint8Array);
+          }
+        });
+      } else {
+        socket.write("HTTP/1.1 405 Method Not Allowed\r\n\r\n");
       }
-
-      fs.readFile(filePath, (err, fileData) => {
-        if (err) {
-          console.log(err);
-          socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
-        } else {
-          const length = fileData.length;
-          socket.write(
-            `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${length}\r\n\r\n`
-          );
-          socket.write(fileData as Uint8Array);
-        }
-      });
     } else {
       socket.write("HTTP/1.1 404 Not Found\r\n\r\n");
     }
